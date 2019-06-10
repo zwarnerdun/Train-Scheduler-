@@ -26,7 +26,7 @@ $(document).ready(function(){
 
         //storing and receiving different train data//
         name = $("#name").val().trim();
-        Train1 = $("#Train-1").val().trim();
+        Train1 = $("#Train1").val().trim();
         destination = $("#destination").val().trim();
         Frequency = $("#frequency").val().trim();
 
@@ -42,4 +42,35 @@ $(document).ready(function(){
 
     });
 
+    database.ref().on("child_added", function(childSnapshot) {
+        var minAway;
+        // Change year so train 1 comes before now//
+        var firstTrainNew = moment(childSnapshot.val().Train1, "hh:mm").subtract(1, "years");
+        // Difference between the current and Train1//
+        var diffTime = moment().diff(moment(firstTrainNew), "minutes");
+        var remainder = diffTime % childSnapshot.val().frequency;
+        // Minutes until next train
+        var minAway = childSnapshot.val().frequency - remainder;
+        // Next train time
+        var nextTrain = moment().add(minAway, "minutes");
+        nextTrain = moment(nextTrain).format("hh:mm");
+
+        $("#add-row").append("<tr><td>" + childSnapshot.val().name +
+            "</td><td>" + childSnapshot.val().destination +
+            "</td><td>" + childSnapshot.val().Frequency +
+            "</td><td>" + nextTrain + 
+            "</td><td>" + minAway + "</td></tr>");
+
+            // Handle the errors
+        }, function(errorObject) {
+            console.log("Errors handled: " + errorObject.code);
+    });
+
+    database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+        // Changes show on HTML
+        $("#name").html(snapshot.val().name);
+        $("#destination").html(snapshot.val().destination);
+        $("#Train1").html(snapshot.val().Train1);
+        $("#frequency").html(snapshot.val().frequency);
+    });
 });
