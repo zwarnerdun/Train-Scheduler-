@@ -30,6 +30,16 @@ $(document).ready(function(){
         destination = $("#destination").val().trim();
         Frequency = $("#frequency").val().trim();
 
+        // Pushing to database//
+        database.ref().push({
+            name: name,
+            destination: destination,
+            Train1: Train1,
+            Frequency: Frequency,
+            dateAdded: firebase.database.ServerValue.TIMESTAMP
+        });
+        $("form")[0].reset();
+
     });
 
 });
