@@ -29,7 +29,7 @@ $(document).ready(function(){
         Train1 = $("#Train1").val().trim();
         destination = $("#destination").val().trim();
         Frequency = $("#frequency").val().trim();
-
+        
         // Pushing to database//
         database.ref().push({
             name: name,
@@ -47,10 +47,10 @@ $(document).ready(function(){
         // Change year so train 1 comes before now//
         var firstTrainNew = moment(childSnapshot.val().Train1, "hh:mm").subtract(1, "years");
         // Difference between the current and Train1//
-        var diffTime = moment().diff(moment(firstTrainNew), "minutes");
-        var remainder = diffTime % childSnapshot.val().frequency;
+        var diffTime = moment().diff(firstTrainNew, "minutes");
+        var remainder = diffTime % childSnapshot.val().Frequency;
         // Minutes until next train
-        var minAway = childSnapshot.val().frequency - remainder;
+        var minAway = childSnapshot.val().Frequency - remainder;
         // Next train time
         var nextTrain = moment().add(minAway, "minutes");
         nextTrain = moment(nextTrain).format("hh:mm");
@@ -71,6 +71,7 @@ $(document).ready(function(){
         $("#name").html(snapshot.val().name);
         $("#destination").html(snapshot.val().destination);
         $("#Train1").html(snapshot.val().Train1);
-        $("#frequency").html(snapshot.val().frequency);
+        $("#frequency").html(snapshot.val().Frequency);
     });
+
 });
